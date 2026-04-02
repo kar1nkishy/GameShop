@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ game.name }}{% endblock %}
+{% block content %}
+<h1>{{ game.name }}</h1>
+
+{% if game.images.all %}
+  <div style="margin: 20px 0;">
+    {% for image in game.images.all %}
+      <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" style="max-width: 400px; margin: 10px; border: 1px solid #ccc;">
+    {% endfor %}
+  </div>
+{% endif %}
+
+<p>{{ game.description }}</p>
+<p><b>Price:</b> {{ game.price }} USD</p>
+
+<p><a href="{% url 'game_list_by_genre' game.genre.slug %}">← Back to genre</a></p>
+{% endblock %}

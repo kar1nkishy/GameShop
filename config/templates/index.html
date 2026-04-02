@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+<h1>Genres</h1>
+
+{% if genres %}
+  <ul>
+    {% for g in genres %}
+      <li>
+        <a href="{% url 'game_list_by_genre' g.slug %}">{{ g.name }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No genres available.</p>
+{% endif %}
+{% endblock %}

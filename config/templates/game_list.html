@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ genre.name }}{% endblock %}
+{% block content %}
+<h1>{{ genre.name }}</h1>
+
+{% if page_obj.object_list %}
+  <ul>
+    {% for p in page_obj %}
+      <li>
+        <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd;">
+          {% if p.images.all %}
+            <div style="margin-bottom: 10px;">
+              <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}" style="max-width: 200px; height: auto;">
+            </div>
+          {% endif %}
+          <a href="{% url 'game_detail' p.slug %}"><strong>{{ p.name }}</strong></a>
+          <br>
+          Price: <b>{{ p.price }} USD</b>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <div>
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+    {% endif %}
+
+    <span>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Next →</a>
+    {% endif %}
+  </div>
+{% else %}
+  <p>No products available.</p>
+{% endif %}
+{% endblock %}
