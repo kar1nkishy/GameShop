@@ -1,10 +1,11 @@
 {% extends "base.html" %}
-{% block title %}{{ genre.name }}{% endblock %}
+{% block title %}{{ catalog.name }}{% endblock %}
 {% block content %}
-<h1>{{ genre.name }}</h1>
+<h1>{{ catalog.name }}</h1>
 
 <form method="get" style="margin-bottom: 20px;">
   <input name="q" placeholder="Поиск" value="{{ request.GET.q|default:'' }}">
+
   <input name="min_price" placeholder="Цена от" value="{{ request.GET.min_price|default:'' }}">
   <input name="max_price" placeholder="Цена до" value="{{ request.GET.max_price|default:'' }}">
 
@@ -21,34 +22,31 @@
   </select>
 
   <button type="submit">Применить</button>
-  <a href="{% url 'game_list_by_genre' genre.slug %}">Сбросить</a>
+  <a href="{% url 'product_list_by_category' catalog.slug %}">Сбросить</a>
 </form>
 
 {% if page_obj.object_list %}
   {% for p in page_obj %}
-    <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ddd;">
-      <a href="{% url 'game_detail' p.slug %}">{{ p.name }}</a> — {{ p.price }} USD
-      {% if p.stock > 0 %} ✅ В наличии {% else %} ❌ Нет {% endif %}
+    <div style="margin-bottom: 12px; border: 1px solid #ddd; padding: 10px;">
+      <a href="{% url 'game_detail' p.slug %}">{{ p.name }}</a> — {{ p.price }} тг
+      {% if p.stock|default:0 > 0 %} ✅ В наличии {% else %} ❌ Нет {% endif %}
       {% if p.images.all %}
-        <div style="margin-top: 8px;">
-          <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}" style="max-width: 180px; height: auto;">
-        </div>
+        <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}" style="max-width:200px; margin-top: 5px;">
       {% endif %}
     </div>
   {% endfor %}
 
-  <div style="margin-top: 20px;">
-    {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">← Назад</a>
-    {% endif %}
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">← Назад</a>
+  {% endif %}
 
-    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+  {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
 
-    {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">Вперёд →</a>
-    {% endif %}
-  </div>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">Вперёд →</a>
+  {% endif %}
 {% else %}
-  <p>No products available.</p>
+  <p>Нет товаров.</p>
 {% endif %}
+
 {% endblock %}
