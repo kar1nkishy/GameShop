@@ -43,12 +43,6 @@ def product_list_by_category(request, slug):
     except (InvalidOperation, ValueError):
         pass
 
-    # Фильтр "в наличии"
-    if request.GET.get("in_stock") == "1":
-        # если поле stock отсутствует, этот фильтр пропускаем
-        if hasattr(Game, 'stock'):
-            qs = qs.filter(stock__gt=0)
-
     # Сортировка
     sort = request.GET.get("sort", "")
     if sort == "price_asc":

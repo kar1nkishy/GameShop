@@ -9,11 +9,6 @@
   <input name="min_price" placeholder="Цена от" value="{{ request.GET.min_price|default:'' }}">
   <input name="max_price" placeholder="Цена до" value="{{ request.GET.max_price|default:'' }}">
 
-  <label>
-    <input type="checkbox" name="in_stock" value="1" {% if request.GET.in_stock == "1" %}checked{% endif %}>
-    В наличии
-  </label>
-
   <select name="sort">
     <option value="">По умолчанию</option>
     <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>Дешевле</option>
@@ -29,7 +24,6 @@
   {% for p in page_obj %}
     <div style="margin-bottom: 12px; border: 1px solid #ddd; padding: 10px;">
       <a href="{% url 'game_detail' p.slug %}">{{ p.name }}</a> — {{ p.price }} тг
-      {% if p.stock|default:0 > 0 %} ✅ В наличии {% else %} ❌ Нет {% endif %}
       {% if p.images.all %}
         <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}" style="max-width:200px; margin-top: 5px;">
       {% endif %}
