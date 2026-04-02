@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}{{ catalog.name }}{% endblock %}
+{% block title %}{{ genre.name }}{% endblock %}
 {% block content %}
-<h1>{{ catalog.name }}</h1>
+<h1>{{ genre.name }}</h1>
 
 <form method="get" style="margin-bottom: 20px;">
   <input name="q" placeholder="Поиск" value="{{ request.GET.q|default:'' }}">
@@ -17,7 +17,7 @@
   </select>
 
   <button type="submit">Применить</button>
-  <a href="{% url 'product_list_by_category' catalog.slug %}">Сбросить</a>
+  <a href="{% url 'game_list_by_genre' genre.slug %}">Сбросить</a>
 </form>
 
 {% if page_obj.object_list %}

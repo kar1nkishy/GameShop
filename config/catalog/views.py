@@ -20,9 +20,9 @@ def game_detail(request, slug):
     game = get_object_or_404(Game, slug=slug)
     return render(request, "game_detail.html", {"game": game})
 
-def product_list_by_category(request, slug):
-    catalog_obj = get_object_or_404(Genre, slug=slug)
-    qs = Game.objects.filter(genre=catalog_obj)
+def game_list_by_genre(request, slug):
+    genre_obj = get_object_or_404(Genre, slug=slug)
+    qs = Game.objects.filter(genre=genre_obj)
 
     # Оптимизация
     qs = qs.select_related("genre").prefetch_related("images")
@@ -63,7 +63,7 @@ def product_list_by_category(request, slug):
     qs_params = params.urlencode()
 
     return render(request, "catalog/product_list.html", {
-        "catalog": catalog_obj,
+        "genre": genre_obj,
         "page_obj": page_obj,
         "qs_params": qs_params,
     })
