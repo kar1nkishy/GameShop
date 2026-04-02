@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<h1>👤 My Profile</h1>
+
+<div class="profile-card" style="max-width: 650px; margin: 0 auto; padding: 20px;">
+  <div class="profile-meta" style="margin-bottom: 20px;">
+    <p>User: {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email|default:"not specified" }}</p>
+  </div>
+
+  <h2>Edit Profile</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" name="phone" value="{{ profile.phone }}" placeholder="+1 (555) 123-4567">
+    </div>
+
+    <div>
+      <label for="city">City</label>
+      <input type="text" id="city" name="city" value="{{ profile.city }}" placeholder="Your city">
+    </div>
+
+    <div>
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" value="{{ profile.address }}" placeholder="Street, Building">
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Save</button>
+  </form>
+
+  <div class="action-row" style="margin-top: 30px;">
+    <a href="{% url 'my_orders' %}" class="btn btn-primary" style="display: block; width: 100%;">📦 My Orders</a>
+  </div>
+</div>
+{% endblock %}

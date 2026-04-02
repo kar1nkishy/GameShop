@@ -1,12 +1,14 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Game, Genre, GameImage
 from django.core.paginator import Paginator
 from django.db.models import Q
 from decimal import Decimal, InvalidOperation
+from django.http import JsonResponse
 
 def index(request):
     genres = Genre.objects.all()
-    return render(request, "index.html", {"genres": genres})
+    games = Game.objects.all().order_by('-id')[:10]  # последние 10 игр
+    return render(request, "index.html", {"genres": genres, "games": games})
 
 def genre_list(request):
     genres = Genre.objects.all()
@@ -62,10 +64,69 @@ def game_list_by_genre(request, slug):
     params.pop("page", None)
     qs_params = params.urlencode()
 
-    return render(request, "catalog/product_list.html", {
+    return render(request, "game_list.html", {
         "genre": genre_obj,
         "page_obj": page_obj,
         "qs_params": qs_params,
+    })
+
+def add_to_cart(request, game_id):
+    game = get_object_or_404(Game, id=game_id)
+    cart = request.session.get('cart', {})
+    game_id_str = str(game_id)
+    current_qty = cart.get(game_id_str, 0)
+    cart[game_id_str] = current_qty + 1
+    request.session['cart'] = cart
+    request.session.modified = True
+    return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+def remove_from_cart(request, game_id):
+    cart = request.session.get('cart', {})
+    game_id_str = str(game_id)
+    if game_id_str in cart:
+        del cart[game_id_str]
+        request.session['cart'] = cart
+        request.session.modified = True
+    return redirect('cart')
+
+def update_cart(request, game_id, action):
+    game = get_object_or_404(Game, id=game_id)
+    cart = request.session.get('cart', {})
+    game_id_str = str(game_id)
+    current_qty = cart.get(game_id_str, 0)
+    if action == 'increase':
+        cart[game_id_str] = current_qty + 1
+    elif action == 'decrease':
+        if current_qty > 1:
+            cart[game_id_str] = current_qty - 1
+        else:
+            del cart[game_id_str]
+    request.session['cart'] = cart
+    request.session.modified = True
+    return redirect('cart')
+
+def cart_view(request):
+    cart = request.session.get('cart', {})
+    games = []
+    total_sum = 0
+    total_items = 0
+    total_quantity = 0
+    for game_id, qty in cart.items():
+        game = get_object_or_404(Game, id=int(game_id))
+        subtotal = game.price * qty
+        total_sum += subtotal
+        total_items += 1
+        total_quantity += qty
+        games.append({
+            'game': game,
+            'quantity': qty,
+            'subtotal': subtotal,
+        })
+    return render(request, 'cart.html', {
+        'games': games,
+        'total_sum': total_sum,
+        'total_items': total_items,
+        'total_quantity': total_quantity,
     })
 
 

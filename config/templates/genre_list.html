@@ -1,13 +1,20 @@
 {% extends "base.html" %}
+{% block title %}All Genres{% endblock %}
 {% block content %}
-    <h2>{{ category.name }}</h2>
+<h1>🎮 All Genres</h1>
 
-    <h3>Games in this genre:</h3>
-    {% for game in games %}
-        <div>
-            <a href="{% url 'game_detail' game.slug %}">
-                {{ game.name }}
-            </a>
+{% if genres %}
+  <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+    {% for g in genres %}
+      <a href="{% url 'game_list_by_genre' g.slug %}" style="text-decoration: none; color: inherit;">
+        <div class="card" style="text-align: center; padding: 30px; background: #f8fafc; color: #334155; cursor: pointer; border: 1px solid #cbd5e1;">
+          <h3 style="margin: 0; font-size: 20px;">{{ g.name }}</h3>
+          <p style="margin: 10px 0 0 0; opacity: 0.8;">Go to games →</p>
         </div>
+      </a>
     {% endfor %}
+  </div>
+{% else %}
+  <p style="text-align: center; color: #64748b; padding: 40px;">No genres found</p>
+{% endif %}
 {% endblock %}

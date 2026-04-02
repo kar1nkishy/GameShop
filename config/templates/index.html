@@ -1,17 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Index{% endblock %}
+{% block title %}Game Shop - Home{% endblock %}
 {% block content %}
-<h1>Genres</h1>
+<h1>🎮 Welcome to Game Shop</h1>
+<p style="font-size: 16px; color: #666; margin-bottom: 30px;">Discover amazing games across all genres.</p>
 
-{% if genres %}
-  <ul>
-    {% for g in genres %}
-      <li>
-        <a href="{% url 'game_list_by_genre' g.slug %}">{{ g.name }}</a>
-      </li>
+<h2>⭐ New Arrivals</h2>
+{% if games %}
+  <div class="grid">
+    {% for game in games %}
+      <div class="game-card">
+        {% if game.images.all %}
+          <div class="game-card-image-wrapper">
+            <img src="{{ game.images.first.image.url }}" alt="{{ game.name }}">
+          </div>
+        {% else %}
+          <div class="game-card-image-wrapper" style="background: #ecf0f1; display: flex; align-items: center; justify-content: center; color: #95a5a6;">No image</div>
+        {% endif %}
+        <div class="game-card-body">
+          <a href="{% url 'game_detail' game.slug %}"><h3>{{ game.name }}</h3></a>
+          <p style="color: #7f8c8d; font-size: 13px; margin: 5px 0;">{{ game.genre.name }}</p>
+          <p class="price">${{ game.price }}</p>
+          <a href="{% url 'add_to_cart' game.id %}" class="btn btn-success">🛒 Add to Cart</a>
+        </div>
+      </div>
     {% endfor %}
-  </ul>
+  </div>
 {% else %}
-  <p>No genres available.</p>
+  <p style="text-align: center; color: #95a5a6; padding: 40px;">No games available.</p>
 {% endif %}
 {% endblock %}

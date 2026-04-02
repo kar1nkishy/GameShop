@@ -1,18 +1,43 @@
 {% extends "base.html" %}
 {% block title %}{{ game.name }}{% endblock %}
 {% block content %}
-<h1>{{ game.name }}</h1>
+<div class="game-detail-card">
+  <div>
+    <div>
+      {% if game.images.all %}
+        <div class="game-detail-image-wrap">
+          <img src="{{ game.images.first.image.url }}" alt="{{ game.name }}" class="game-detail-main-image">
+        </div>
+        {% if game.images.all|length > 1 %}
+          <div class="game-detail-thumb-grid">
+            {% for image in game.images.all %}
+              <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="game-detail-thumb">
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div style="width: 100%; height: 400px; background: #ecf0f1; display: flex; align-items: center; justify-content: center; color: #95a5a6; border-radius: 10px; font-size: 18px;">No image</div>
+      {% endif %}
+    </div>
 
-{% if game.images.all %}
-  <div style="margin: 20px 0;">
-    {% for image in game.images.all %}
-      <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" style="max-width: 400px; margin: 10px; border: 1px solid #ccc;">
-    {% endfor %}
+    <div>
+      <h1 style="margin: 0 0 10px 0;">{{ game.name }}</h1>
+      <p style="color: #667eea; font-weight: 600; margin-bottom: 20px;">{{ game.genre.name }}</p>
+      
+      <div class="game-price-box">
+        <p class="price-label">Price</p>
+        <p class="price-value">${{ game.price }}</p>
+      </div>
+
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="margin-top: 0;">📝 Description</h3>
+        <p style="color: #555; line-height: 1.6;">{{ game.description }}</p>
+      </div>
+
+      <a href="{% url 'add_to_cart' game.id %}" class="btn btn-success" style="width: 100%; font-size: 18px; padding: 15px;">🛒 Add to Cart</a>
+      <a href="{% url 'game_list_by_genre' game.genre.slug %}" class="btn btn-primary" style="width: 100%; font-size: 16px; padding: 12px; margin-top: 10px;">⬅️ Back to Genre</a>
+    </div>
   </div>
-{% endif %}
+</div>
 
-<p>{{ game.description }}</p>
-<p><b>Price:</b> {{ game.price }} USD</p>
-
-<p><a href="{% url 'game_list_by_genre' game.genre.slug %}">← Back to genre</a></p>
 {% endblock %}

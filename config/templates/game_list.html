@@ -1,54 +1,70 @@
 {% extends "base.html" %}
 {% block title %}{{ genre.name }}{% endblock %}
 {% block content %}
-<h1>{{ genre.name }}</h1>
+<h1>🎯 {{ genre.name }}</h1>
 
-<form method="get" style="margin-bottom: 20px;">
-  <input name="q" placeholder="Поиск" value="{{ request.GET.q|default:'' }}">
-  <input name="min_price" placeholder="Цена от" value="{{ request.GET.min_price|default:'' }}">
-  <input name="max_price" placeholder="Цена до" value="{{ request.GET.max_price|default:'' }}">
-
-  <label>
-    <input type="checkbox" name="in_stock" value="1" {% if request.GET.in_stock == "1" %}checked{% endif %}>
-    В наличии
-  </label>
-
-  <select name="sort">
-    <option value="">По умолчанию</option>
-    <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>Дешевле</option>
-    <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>Дороже</option>
-    <option value="new" {% if request.GET.sort == "new" %}selected{% endif %}>Новинки</option>
-  </select>
-
-  <button type="submit">Применить</button>
-  <a href="{% url 'game_list_by_genre' genre.slug %}">Сбросить</a>
-</form>
+<div class="card" style="margin-bottom: 30px; padding: 20px;">
+  <form method="get" style="background: none; padding: 0; box-shadow: none;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+      <div>
+        <input type="text" name="q" placeholder="🔍 Search by title" value="{{ request.GET.q|default:'' }}" style="width: 100%;">
+      </div>
+      <div>
+        <input type="text" name="min_price" placeholder="Min price" value="{{ request.GET.min_price|default:'' }}" style="width: 100%;">
+      </div>
+      <div>
+        <input type="text" name="max_price" placeholder="Max price" value="{{ request.GET.max_price|default:'' }}" style="width: 100%;">
+      </div>
+      <div>
+        <select name="sort" style="width: 100%;">
+          <option value="">Sort by</option>
+          <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>Price ↑</option>
+          <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>Price ↓</option>
+          <option value="new" {% if request.GET.sort == "new" %}selected{% endif %}>New</option>
+        </select>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+      <button type="submit" class="btn btn-primary" style="width: auto;">🔍 Search</button>
+      <a href="{% url 'game_list_by_genre' genre.slug %}" class="btn btn-primary" style="width: auto;">✕ Reset</a>
+    </div>
+  </form>
+</div>
 
 {% if page_obj.object_list %}
-  {% for p in page_obj %}
-    <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ddd;">
-      <a href="{% url 'game_detail' p.slug %}">{{ p.name }}</a> — {{ p.price }} USD
-      {% if p.stock > 0 %} ✅ В наличии {% else %} ❌ Нет {% endif %}
-      {% if p.images.all %}
-        <div style="margin-top: 8px;">
-          <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}" style="max-width: 180px; height: auto;">
+  <div class="grid">
+    {% for p in page_obj %}
+      <div class="game-card">
+        {% if p.images.all %}
+          <div class="game-card-image-wrapper">
+            <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}">
+          </div>
+        {% else %}
+          <div class="game-card-image-wrapper" style="background: #ecf0f1; display: flex; align-items: center; justify-content: center; color: #95a5a6;">No image</div>
+        {% endif %}
+        <div class="game-card-body">
+          <a href="{% url 'game_detail' p.slug %}"><h3>{{ p.name }}</h3></a>
+          <p class="price">${{ p.price }}</p>
+          <a href="{% url 'add_to_cart' p.id %}" class="btn btn-success">🛒 Add to Cart</a>
         </div>
-      {% endif %}
-    </div>
-  {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
 
-  <div style="margin-top: 20px;">
+  <div style="display: flex; justify-content: center; gap: 10px; margin-top: 40px; align-items: center;">
     {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">← Назад</a>
+      <a href="?page={{ page_obj.previous_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}" class="btn btn-primary">← Previous</a>
     {% endif %}
 
-    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    <span style="font-weight: 600; color: #667eea;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
 
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">Вперёд →</a>
+      <a href="?page={{ page_obj.next_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}" class="btn btn-primary">Next →</a>
     {% endif %}
   </div>
 {% else %}
-  <p>No products available.</p>
+  <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+    <p style="font-size: 18px;">😕 Games not found</p>
+  </div>
 {% endif %}
 {% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<h1>🛒 Your Cart</h1>
+
+{% if games %}
+  <table>
+    <thead>
+      <tr>
+        <th>Game</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in games %}
+        <tr>
+          <td>
+            <a href="{% url 'game_detail' item.game.slug %}">{{ item.game.name }}</a>
+            {% if item.game.images.all %}
+              <br><img src="{{ item.game.images.first.image.url }}" alt="{{ item.game.name }}" class="cart-thumbnail">
+            {% endif %}
+          </td>
+          <td>${{ item.game.price }}</td>
+          <td style="text-align: center; font-weight: 600;">{{ item.quantity }}</td>
+          <td style="color: #2c3e50; font-weight: 600;">${{ item.subtotal }}</td>
+          <td>
+            <a href="{% url 'update_cart' item.game.id 'increase' %}" class="btn btn-primary" style="width: auto; padding: 6px 10px; font-size: 12px;">➕</a>
+            <a href="{% url 'update_cart' item.game.id 'decrease' %}" class="btn btn-primary" style="width: auto; padding: 6px 10px; font-size: 12px;">➖</a>
+            <a href="{% url 'remove_from_cart' item.game.id %}" class="btn btn-danger" style="width: auto; padding: 6px 10px; font-size: 12px;">❌</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="cart-summary">
+    <p><strong>Items:</strong> {{ total_items }}</p>
+    <p><strong>Total Quantity:</strong> {{ total_quantity }}</p>
+    <p><strong>Total:</strong> ${{ total_sum }}</p>
+  </div>
+
+  <div class="action-row">
+    <a href="{% url 'checkout' %}" class="btn btn-success">💳 Checkout</a>
+    <a href="{% url 'index' %}" class="btn btn-primary">🛍️ Continue shopping</a>
+  </div>
+{% else %}
+  <div class="empty-message">
+    <p class="empty-icon">🛒</p>
+    <p class="empty-text">Your cart is empty</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">🛍️ Start shopping</a>
+  </div>
+{% endif %}
+{% endblock %}

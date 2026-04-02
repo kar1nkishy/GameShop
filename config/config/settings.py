@@ -72,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'catalog.context_processors.genres',
             ],
         },
     },
@@ -133,3 +134,6 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR.parent / 'static',
 ]
+
+LOGIN_REDIRECT_URL = 'profile'
+LOGIN_URL = 'login'

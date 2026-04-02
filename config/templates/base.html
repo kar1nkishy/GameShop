@@ -1,14 +1,43 @@
+{% load static %}
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Shop{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
   <header>
-    <a href="{% url 'index' %}">Game Shop</a> |
-    <a href="{% url 'genre_list' %}">Genres</a>
-    <hr>
+    <div class="header-top">
+      <div>
+        <a href="{% url 'index' %}"><strong>🎮 Game Shop</strong></a>
+        <span>|</span>
+        <a href="{% url 'genre_list' %}">All Genres</a>
+        <span>|</span>
+        <a href="{% url 'cart' %}">🛒 Cart</a>
+      </div>
+      <div>
+        {% if user.is_authenticated %}
+          <span>👋 {{ user.username }}</span>
+          <a href="{% url 'profile' %}">Profile</a>
+          <a href="{% url 'my_orders' %}">Orders</a>
+          <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+          <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+      </div>
+    </div>
+    {% if genres %}
+    <nav>
+      <ul>
+        {% for g in genres %}
+          <li><a href="{% url 'game_list_by_genre' g.slug %}">{{ g.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    {% endif %}
   </header>
 
   <main>
@@ -16,8 +45,7 @@
   </main>
 
   <footer>
-    <hr>
-    <small>ENU College • Django Shop</small>
+    <small>🎮 Game Shop • ENU College • Django 6.0</small>
   </footer>
 </body>
 </html>
